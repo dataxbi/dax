@@ -5,7 +5,7 @@ Ejemplos de funciones DAX
 [Calendario.pbix](Calendario.pbix)
 
 ## Ejemplo de gráfica de dos columnas apiladas con leyendas diferentes
-[Grafica-columna-apilada-con-leyenda.pbix](Grafica-columna-apilada-con-leyenda.pbix)
+[Grafica-columna-apilada-con-leyenda.pbix](raw/master/Grafica-columna-apilada-con-leyenda.pbix)
 
 
 
