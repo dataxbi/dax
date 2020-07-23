@@ -1,4 +1,4 @@
-# dax
+# DAX
 Ejemplos de funciones DAX 
 
 ## Ejemplo de calendario que incluye los días festivos y laborables de Barcelona
@@ -9,4 +9,9 @@ Ejemplos de funciones DAX
 
 ## Ejemplo de como agrupar valores dinámicamente con DAX
 [Agrupar-valores-con-DAX.pbix](../../raw/master/Agrupar-valores-con-DAX.pbix)
+
+## Modelo y ejemplos utilizados en el vídeo sobre la función TREATAS
+[PBIX con el modelo](../../raw/master/DAX-TREATAS.pbix)
+
+[Expresiones DAX de ejemlo](../../raw/master/DAX-TREATAS.dax)
 

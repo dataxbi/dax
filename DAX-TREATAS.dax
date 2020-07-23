@@ -1,0 +1,215 @@
+﻿-- Ejemplos utilizados en el vídeo sobre la función TREATAS
+-- Autor: nelson.lopez@dataxbi.com
+-- Estos ejemplos están basados en un blog de Alberto Ferrari: https://www.sqlbi.com/articles/understanding-data-lineage-in-dax/
+
+
+
+EVALUATE
+ADDCOLUMNS(
+	SELECTCOLUMNS(
+		VALUES('Product'[Product Category]),
+		"Categoría", 'Product'[Product Category]
+	),
+	"Ventas Internet", [Internet Sales]	
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Sin linaje 1
+EVALUATE
+ADDCOLUMNS(
+	SELECTCOLUMNS(
+		VALUES('Product'[Product Category]),
+		"Categoría", 'Product'[Product Category] & ""
+	),
+	"Ventas Internet", [Internet Sales]	
+)
+
+
+
+
+
+
+
+
+
+-- Sin linaje 2
+EVALUATE
+ADDCOLUMNS(
+	SELECTCOLUMNS(
+		VALUES('Product'[Product Category]),
+		"Categoría", UPPER('Product'[Product Category])
+	),
+	"Ventas Internet", [Internet Sales]	
+)
+
+
+
+
+
+
+
+-- Sin linaje 3
+EVALUATE
+ADDCOLUMNS(
+	SELECTCOLUMNS(
+		VALUES('Product'[Product Category]),
+		"Categoría", CALCULATE(MIN('Product'[Product Category]))
+	),
+	"Ventas Internet", [Internet Sales]	
+)
+
+
+
+
+
+
+-- TREATAS
+EVALUATE
+ADDCOLUMNS(
+	TREATAS(	
+		SELECTCOLUMNS(
+			VALUES('Product'[Product Category]),
+			"Categoría", 'Product'[Product Category] & ""
+		),
+		'Product'[Product Category]
+	),
+	"Ventas Internet", [Internet Sales]	
+)
+
+
+
+
+
+-- Tabla
+EVALUATE
+VAR categorias =
+    DATATABLE (
+        "Categoría", STRING,
+        {
+            { "Accesorio" },
+            { "Bicicleta" }
+        }
+    )
+	RETURN ADDCOLUMNS(
+		categorias,
+		"Ventas Totales", [Internet Sales]
+	)
+
+
+
+
+
+
+-- Tabla con TREATAS
+EVALUATE
+VAR categorias =
+    DATATABLE (
+        "Categoría", STRING,
+        {
+            { "Accesorio" },
+            { "Bicicleta" }
+        }
+    )
+	RETURN ADDCOLUMNS(
+		TREATAS(
+			categorias,
+			'Product'[Product Category]
+		),
+		"Ventas Totales", [Internet Sales]
+	)
+
+
+
+
+-- Tabla con TREATAS 2
+EVALUATE
+VAR categorias =
+    DATATABLE (
+        "Categoría", STRING,
+        {
+            { "Accesorio " },
+            { "No existe" },
+            { "Bicicleta" }
+        }
+    )
+	RETURN ADDCOLUMNS(
+		TREATAS(
+			categorias,
+			'Product'[Product Category]
+		),
+		"Ventas Totales", [Internet Sales]
+	)
+
+
+
+
+
+-- Ventas del primer día por subcategoría
+
+EVALUATE
+    SUMMARIZE (
+        'Internet Sales',
+        'Product'[Product Subcategory],
+        "Ventas", [Internet Sales],
+        "Primer día", CALCULATE(MIN('Internet Sales'[Order Date]))
+    )
+        
+
+
+
+
+
+EVALUATE
+    VAR subcategoriasPrimerDia = SUMMARIZE (
+        'Internet Sales',
+        'Product'[Product Subcategory],
+        "Primer día", CALCULATE(MIN('Internet Sales'[Order Date]))
+    )
+    RETURN SUMMARIZE(
+		'Internet Sales',
+		'Product'[Product Subcategory],
+		"Ventas", [Internet Sales],
+		"Ventas primer día", CALCULATE(
+					[Internet Sales],
+					subcategoriasPrimerDia
+				  )
+	)
+
+
+
+
+
+
+EVALUATE
+    VAR subcategoriasPrimerDia = SUMMARIZE (
+        'Internet Sales',
+        'Product'[Product Subcategory],
+        "Primer día", CALCULATE(MIN('Internet Sales'[Order Date]))
+    )
+    VAR subcategoriasPrimerDiaLinaje = TREATAS(
+    									subcategoriasPrimerDia,
+    									'Product'[Product Subcategory],
+    									'Internet Sales'[Order Date]
+	)
+    RETURN SUMMARIZE(
+		'Internet Sales',
+		'Product'[Product Subcategory],
+		"Ventas", [Internet Sales],
+		"Ventas primer día", CALCULATE(
+					[Internet Sales],
+					subcategoriasPrimerDiaLinaje
+				  )
+	)
+
+
